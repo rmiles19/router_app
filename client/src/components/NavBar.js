@@ -1,13 +1,67 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { NavLink, withRouter } from 'react-router-dom';
+import { isAuthenticated, logout } from '../fakeAuth';
 
+const styles = {
+  active: {
+    textDecoration: 'none',
+    fontWeight: 'bold',
+    color: 'black',
+  }
+}
 
-const NavBar =  () => (
+const additionalLinks = (history) => {
+  if (isAuthenticated()) {
+    return (
+      <span>
+        <NavLink
+          activeStyle={styles.active}
+          to="/dashboard"
+        >
+          Dashboard
+        </NavLink>
+        {' '}
+        <a 
+          href="#"
+          onClick={ () => {
+            logout()
+            history.push("/login")
+          }}
+         >
+           Logout
+         </a>
+      </span>
+    )
+  } else {
+    return (
+      <NavLink
+        style={styles.active}
+        to="/login"
+      >
+        Login
+      </NavLink>
+    )
+  }
+}
+
+const NavBar = ({ history }) => (
   <nav>
-    <Link to="/">Home</Link>
+    <NavLink 
+      exact
+      activeStyle={styles.active} 
+      to="/"
+    >
+      Home
+    </NavLink>
     {' '}
-    <Link to="/about"> About</Link>
+    <NavLink 
+      to="/about"
+      activeStyle={styles.active}
+    >
+      About
+    </NavLink>
+    {additionalLinks(history)}
   </nav>
 )
 
-export default NavBar;
+export default withRouter(NavBar);
